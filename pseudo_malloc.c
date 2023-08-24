@@ -10,11 +10,11 @@
 #include "bit_map.h"
 #include "buddy_allocator.h"
 #include "pseudo_malloc.h"
+#include "allocator_common.h"
 
 void* pseudo_malloc(int size) {
     assert(size > 0);
     void* allocated_mem;
-    size += sizeof(int);
 
     // small allocation, we will use the buddy allocator
     if(size < PAGE_SIZE / 4) {
@@ -36,19 +36,18 @@ void* pseudo_malloc(int size) {
 
 void pseudo_free(void* address, int size) {
     assert(address != NULL);
-    int adjusted_size = size + sizeof(int);
 
     // The address was allocated using a buddy allocator
     if (size < PAGE_SIZE / 4) {
-        printf("--- %d < %d --- [buddy]\n", adjusted_size, PAGE_SIZE / 4);
+        printf("--- %d < %d --- [buddy]\n", size, PAGE_SIZE / 4);
         BuddyAllocator_freeAllocatedMemory(&balloc, address);
     }
     // The address was allocated using mmap
     else {
         printf("\n--- %d > %d --- [munmap]\n", size, PAGE_SIZE / 4);
         int* adjusted_address = (int*)address - 1;
-        assert(munmap((void*)adjusted_address, adjusted_size) != -1);
-        printf("Address %p of size %d deallocated using munmap\n", adjusted_address, adjusted_size);
+        assert(munmap((void*)adjusted_address, size) != -1);
+        printf("Address %p of size %d deallocated using munmap\n", adjusted_address, size);
     }
 }
 

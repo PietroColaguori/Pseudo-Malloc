@@ -7,6 +7,9 @@
 #include <assert.h>
 #include <sys/mman.h>
 #include <math.h>
+#include "bit_map.h"
+#include "buddy_allocator.h"
+#include "allocator_common.h"
 
 #define PAGE_SIZE 4096
 #define MANAGED_MEMORY_SIZE 1 << 20
