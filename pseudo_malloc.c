@@ -39,12 +39,12 @@ void pseudo_free(void* address, int size) {
 
     // The address was allocated using a buddy allocator
     if (size < PAGE_SIZE / 4) {
-        printf("--- %d < %d --- [buddy]\n", size, PAGE_SIZE / 4);
+        printf("%d < %d [buddy used]\n", size, PAGE_SIZE / 4);
         BuddyAllocator_freeAllocatedMemory(&balloc, address);
     }
     // The address was allocated using mmap
     else {
-        printf("\n--- %d > %d --- [munmap]\n", size, PAGE_SIZE / 4);
+        printf("\n%d > %d [munmap used]\n", size, PAGE_SIZE / 4);
         int* adjusted_address = (int*)address - 1;
         assert(munmap((void*)adjusted_address, size) != -1);
         printf("Address %p of size %d deallocated using munmap\n", adjusted_address, size);
